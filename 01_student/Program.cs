@@ -26,13 +26,13 @@
 +	*для видалення зайвих знаків з імен визначити приватний метод*
  
 +	статична властивість для читання, що повертає число створених на даний момент обєктів класу Студент
-	встановлення оцінок з програмування ( метод, приймає масив оцінок  params int []), *оцінки можна клонувати або створювати масив відповідного розміру та копіювати*
-	встановлення оцінок з адміністрування ( метод, приймає масив оцінок   params int [] )
-	встановлення оцінок з дизайну ( метод, приймає масив оцінок   params int [])
-	середній бал з програмування ( read-only властивість )
-	середній бал з адміністрування ( read-only властивість,)
-	середній бал з дизайну ( read-only властивість )
-	середній бал успішності з усіх предметів ( read-only властивість)
++	встановлення оцінок з програмування ( метод, приймає масив оцінок  params int []), *оцінки можна клонувати або створювати масив відповідного розміру та копіювати*
++	встановлення оцінок з адміністрування ( метод, приймає масив оцінок   params int [] )
++	встановлення оцінок з дизайну ( метод, приймає масив оцінок   params int [])
++	середній бал з програмування ( read-only властивість )
++	середній бал з адміністрування ( read-only властивість,)
++	середній бал з дизайну ( read-only властивість )
++	середній бал успішності з усіх предметів ( read-only властивість)
 +	повне ім'я студента ( read-only властивість ) 
 	вік (повних років) ( метод, приймає дату (DateTime) і обчислює вік студента на цю дату ( читайте про оператор віднімання ),
 	властивість вік(повних років) на сьогоднішню дату
@@ -71,7 +71,12 @@ namespace _01_student
             int gradebook;
             const int constBook = 10000;
             DateTime date;
-            int[][] marks = new int[3][];
+            int[][] marks = new int[3][]
+              {
+                new int[0],
+                new int[0],
+                new int[0]
+               };
             const int minMark = 1;
             const int maxMark = 12;
             enum Subject { Programming, Admin, Design };
@@ -163,16 +168,136 @@ namespace _01_student
                 get => count;
             }
 
+            // додавання елементу в масив
+            static void AppendElemToArray(ref int[][] arr, Subject subj, int element)
+            {
+                if (element >= minMark && element <= maxMark )
+                {
+                    Array.Resize(ref arr[(int)subj], arr[(int)subj].Length + 1);
+                    arr[(int)subj][arr[(int)subj].Length - 1] = element;
+                }
+            }
+
             //встановлення оцінок з програмування ( метод, приймає масив оцінок  params int []), 
             //*оцінки можна клонувати або створювати масив відповідного розміру та копіювати*
-            //public SetMarksPrograming()
-            //{
-            //    marks[Programing][]
-            //}
+            public void SetMarksPrograming(params int[] points)
+            {
+                foreach (int p in points)
+                {
+                    AppendElemToArray(ref marks, Subject.Programming, p);
+                }
+            }
+
+            //встановлення оцінок з адміністрування(метод, приймає масив оцінок   params int[] )
+            public void SetMarksAdmin(params int[] points)
+            {
+                foreach (int p in points)
+                {
+                    AppendElemToArray(ref marks, Subject.Admin, p);
+                }
+            }
+
+            //встановлення оцінок з дизайну(метод, приймає масив оцінок   params int[])
+            public void SetMarksDesign(params int[] points)
+            {
+                foreach (int p in points)
+                {
+                    AppendElemToArray(ref marks, Subject.Design, p);
+                }
+            }
+
+
+            // друк оцінок
+            static string PrintMarks(int[][] arr, string message = "")
+            {
+                string str = message;
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    str += Convert.ToString((Subject)i) + ":\t\t";
+                    for (int j = 0; j < arr[i].Length; j++)
+                        str += $"{arr[i][j]}\t";
+                    str += "\n";
+                }
+                return str;
+            }
+
+            //середній бал з програмування ( read-only властивість )
+            public double AvgPrograming
+            {
+                get
+                {
+                    double avg = 0;
+                    int subj = (int)Subject.Programming;
+                    if (marks[subj].Length != 0)
+                    {
+                        for (int i = 0; i < marks[subj].Length; i++)
+                            avg += (double)marks[subj][i];
+                        return avg / marks[subj].Length;
+                    }
+                    else 
+                        return avg;
+                }
+            }
+
+            //середній бал з адміністрування(read-only властивість,)
+            public double AvgAdmin
+            {
+                get
+                {
+                    double avg = 0;
+                    int subj = (int)Subject.Admin;
+                    if (marks[subj].Length != 0)
+                    {
+                        for (int i = 0; i < marks[subj].Length; i++)
+                            avg += (double)marks[subj][i];
+                        return avg / marks[subj].Length;
+                    }
+                    else
+                        return avg;
+                }
+            }
+
+            //середній бал з дизайну(read-only властивість)
+            public double AvgDesign
+            {
+                get
+                {
+                    double avg = 0;
+                    int subj = (int)Subject.Design;
+                    if (marks[subj].Length != 0)
+                    {
+                        for (int i = 0; i < marks[subj].Length; i++)
+                            avg += (double)marks[subj][i];
+                        return avg / marks[subj].Length;
+                    }
+                    else
+                        return avg;
+                }
+            }
+
+            //середній бал успішності з усіх предметів ( read-only властивість)
+            public double AvgAll
+            {
+                get
+                {
+                    double avg = 0;
+                    int count = 0;
+                    for(int k = 0; k < marks.Length; k++)
+                    if (marks[k].Length != 0)
+                    {
+                        for (int i = 0; i < marks[k].Length; i++)
+                            {
+                                avg += (double)marks[k][i];
+                                ++count;
+                            }
+                    }
+                    return avg / count;
+                }
+            }
 
             public override string ToString()
             {
-                return $"\nID Gradebook:\t{group}{gradebook}\nFull name:\t{FullName}\nDate:\t\t{date}\n";
+                return $"\nID Gradebook:\t{group}{gradebook}\nFull name:\t{FullName}\nDate:\t\t{date}\n{PrintMarks(marks, "Marks:\n")}";
             }
         }
 
@@ -180,8 +305,17 @@ namespace _01_student
         {
             DateTime dt = DateTime.Now;            
             Student s = new Student("Pet789)(renko", "I,h2or 3", "Ivano5/-+, vych", dt);
+     
+            s.SetMarksPrograming(10, 9, 0, 11, -5, 7 ); // 0 і -5 не додасть
+            s.SetMarksAdmin(7, 8, 7, 11);
+            s.SetMarksDesign(6, 8);
             Console.WriteLine(s);
+            Console.WriteLine($"Average marks of Programming:\t{s.AvgPrograming}");
+            Console.WriteLine($"Average marks of Admin:\t{s.AvgAdmin}");
+            Console.WriteLine($"Average marks of Design:\t{s.AvgDesign}");
+            Console.WriteLine($"Average marks of all subjects:\t{s.AvgAll}");
             Console.WriteLine($"Q-ty of students:\t{Student.QtyStudents}");
+            
         }
     }
 }
