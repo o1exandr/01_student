@@ -34,12 +34,12 @@
 +	середній бал з дизайну ( read-only властивість )
 +	середній бал успішності з усіх предметів ( read-only властивість)
 +	повне ім'я студента ( read-only властивість ) 
-	вік (повних років) ( метод, приймає дату (DateTime) і обчислює вік студента на цю дату ( читайте про оператор віднімання ),
-	властивість вік(повних років) на сьогоднішню дату
-	група ( АВТОвластивість для читання і запису )
-	зміна оцінки з певного предмету за певним номером( void SetMark(Subject subject, int numLesson, int mark )), виконувати перевірку номеру пари та самої оцінки на коректність(відповідні приватні методи перевірки)
-	очищення всіх оцінок (метод, без параметрів)
-	вивід інформації про студента( у тому числі  оцінки )
++	вік (повних років) ( метод, приймає дату (DateTime) і обчислює вік студента на цю дату ( читайте про оператор віднімання ),
++	властивість вік(повних років) на сьогоднішню дату
++	група ( АВТОвластивість для читання і запису )
++	зміна оцінки з певного предмету за певним номером( void SetMark(Subject subject, int numLesson, int mark )), виконувати перевірку номеру пари та самої оцінки на коректність(відповідні приватні методи перевірки)
++	очищення всіх оцінок (метод, без параметрів)
++	вивід інформації про студента( у тому числі  оцінки )
 	введення даних про студента(імя, прізвище, по-батькові, група)
 
 * Передбачити правильні розрахунки у класі, якщо оцінки не виставлені(null)
@@ -67,7 +67,6 @@ namespace _01_student
             string surname;
             string name;
             string middlename;
-            string group;
             int gradebook;
             const int constBook = 10000;
             DateTime date;
@@ -79,7 +78,7 @@ namespace _01_student
                };
             const int minMark = 1;
             const int maxMark = 12;
-            enum Subject { Programming, Admin, Design };
+            public enum Subject { Programming, Admin, Design };
             private static string nameUniversity = "Some IT University";
             static int count;
 
@@ -171,7 +170,7 @@ namespace _01_student
             // додавання елементу в масив
             static void AppendElemToArray(ref int[][] arr, Subject subj, int element)
             {
-                if (element >= minMark && element <= maxMark )
+                if(CorrectMark(element))
                 {
                     Array.Resize(ref arr[(int)subj], arr[(int)subj].Length + 1);
                     arr[(int)subj][arr[(int)subj].Length - 1] = element;
@@ -295,27 +294,105 @@ namespace _01_student
                 }
             }
 
+            //вік(повних років) (метод, приймає дату (DateTime) і обчислює вік студента на цю дату(читайте про оператор віднімання),
+            public int FullYears(DateTime dt)
+            {
+                TimeSpan span = dt - date;
+                int years = span.Days;
+                return years / 365;
+            }
+
+            //властивість вік(повних років) на сьогоднішню дату
+            public int FullYearsOnToday
+            {
+                get
+                {
+                    TimeSpan span = DateTime.Now - date;
+                    int years = span.Days;
+                    return years / 365;
+                }
+            }
+
+            //група ( АВТОвластивість для читання і запису )
+            public string Group
+            { get; set; }
+
+            //зміна оцінки з певного предмету за певним номером( void SetMark(Subject subject, int numLesson, int mark )), 
+            //виконувати перевірку номеру пари та самої оцінки на коректність(відповідні приватні методи перевірки)
+            public void SetMark(Subject subject, int numLesson, int mark)
+            {
+                if (ArrElemPresent((int)subject, numLesson))
+                    if (CorrectMark(mark))
+                        marks[(int)subject][numLesson] = mark;
+            }
+
+            // перевірка на коректність оцінки (в межах 1..12)
+            private static bool CorrectMark(int mark)
+            {
+                if (mark >= minMark && mark <= maxMark)
+                    return true;
+                else
+                    return false;
+            }
+
+            // перевірка чи є елемент [x][y] в масиві
+            private bool ArrElemPresent(int x, int y)
+            {
+                if (x < 3 && x >= 0)
+                {
+                    if (marks[x].Length > y)
+                        return true;
+                    else
+                        return false;
+                }
+                else
+                    return false;
+            }
+
+            //очищення всіх оцінок (метод, без параметрів)
+            public void DeleteAllMarks()
+            {
+                for(int i = 0; i < 3; i++)
+                    Array.Resize(ref marks[i], 0);
+            }
+
+            //вивід інформації про студента( у тому числі  оцінки )
+            public void Print()
+            {
+                Console.WriteLine($"\nID Gradebook:\t{gradebook}\nFull name:\t{FullName}\nBirth date:\t{date.ToShortDateString()} ({FullYearsOnToday} years)");
+                Console.WriteLine($"Un-sity/Group:\t{nameUniversity} / {Group}\n{PrintMarks(marks, "\n\tMarks:\n----------------\n")}");
+                Console.WriteLine($"Average mark of Programming:\t{AvgPrograming}");
+                Console.WriteLine($"Average mark of Admin:\t{AvgAdmin}");
+                Console.WriteLine($"Average mark of Design:\t{AvgDesign}");
+                Console.WriteLine($"Average mark of all subjects:\t{AvgAll}");
+            }
+
+
             public override string ToString()
             {
-                return $"\nID Gradebook:\t{group}{gradebook}\nFull name:\t{FullName}\nDate:\t\t{date}\n{PrintMarks(marks, "Marks:\n")}";
+                return $"\nID Gradebook:\t{gradebook}\nFull name:\t{FullName}\nBirth date:\t{date.ToShortDateString()}";
             }
         }
 
         static void Main(string[] args)
         {
-            DateTime dt = DateTime.Now;            
-            Student s = new Student("Pet789)(renko", "I,h2or 3", "Ivano5/-+, vych", dt);
+                      
+            Student s = new Student("Pet789)(renko", "I,h2or 3", "Ivano5/-+, vych", new DateTime(2000, 7, 20));
      
             s.SetMarksPrograming(10, 9, 0, 11, -5, 7 ); // 0 і -5 не додасть
             s.SetMarksAdmin(7, 8, 7, 11);
             s.SetMarksDesign(6, 8);
             Console.WriteLine(s);
-            Console.WriteLine($"Average marks of Programming:\t{s.AvgPrograming}");
-            Console.WriteLine($"Average marks of Admin:\t{s.AvgAdmin}");
-            Console.WriteLine($"Average marks of Design:\t{s.AvgDesign}");
-            Console.WriteLine($"Average marks of all subjects:\t{s.AvgAll}");
-            Console.WriteLine($"Q-ty of students:\t{Student.QtyStudents}");
             
+            Console.WriteLine($"Q-ty of students:\t{Student.QtyStudents}");
+            Console.WriteLine(s.FullYearsOnToday);
+            s.Group = "31PS9-1SPR";
+            s.SetMark(Student.Subject.Admin, 0, 12);
+            s.Print();
+            s.DeleteAllMarks();
+            //Console.WriteLine(s);
+
+
         }
     }
 }
