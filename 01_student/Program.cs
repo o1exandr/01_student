@@ -40,7 +40,7 @@
 +	зміна оцінки з певного предмету за певним номером( void SetMark(Subject subject, int numLesson, int mark )), виконувати перевірку номеру пари та самої оцінки на коректність(відповідні приватні методи перевірки)
 +	очищення всіх оцінок (метод, без параметрів)
 +	вивід інформації про студента( у тому числі  оцінки )
-	введення даних про студента(імя, прізвище, по-батькові, група)
++	введення даних про студента(імя, прізвище, по-батькові, група)
 
 * Передбачити правильні розрахунки у класі, якщо оцінки не виставлені(null)
 Перевірити роботу класу.
@@ -367,6 +367,29 @@ namespace _01_student
                 Console.WriteLine($"Average mark of all subjects:\t{AvgAll}");
             }
 
+            //	введення даних про студента(імя, прізвище, по-батькові, група) через параметри
+            public void EnterDataSudent(string _name, string _surname, string _middlename, string _group)
+            {
+                this.Surname = _surname;
+                this.Name = _name;
+                this.Middlename = _middlename;
+                this.Group = _group;
+            }
+
+            //	введення даних про студента(імя, прізвище, по-батькові, група) від користувача
+            public void EnterDataSudent()
+            {               
+                Console.Write("Enter name:\t");
+                string _name = Console.ReadLine();
+                Console.Write("Enter surname:\t");
+                string _surname = Console.ReadLine();
+                Console.Write("Enter middlename:\t");
+                string _middlename = Console.ReadLine();
+                Console.Write("Enter group:\t");
+                string _group = Console.ReadLine();
+                EnterDataSudent(_name, _surname, _middlename, _group);
+            }
+
 
             public override string ToString()
             {
@@ -376,7 +399,11 @@ namespace _01_student
 
         static void Main(string[] args)
         {
-                      
+            //Створити масив(або List< Student >) з обєктів Студентів.
+            //const int size = 5;
+            //Student [] students = new Student [size];
+            //students[0].EnterDataSudent("Pet789)(renko", "I,h2or 3", "Ivano5/-+, vych", "31PS9-1SPR");
+
             Student s = new Student("Pet789)(renko", "I,h2or 3", "Ivano5/-+, vych", new DateTime(2000, 7, 20));
      
             s.SetMarksPrograming(10, 9, 0, 11, -5, 7 ); // 0 і -5 не додасть
@@ -391,6 +418,8 @@ namespace _01_student
             s.Print();
             s.DeleteAllMarks();
             //Console.WriteLine(s);
+            s.EnterDataSudent();
+            s.Print();
 
 
         }
