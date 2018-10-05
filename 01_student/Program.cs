@@ -45,18 +45,15 @@
 * Передбачити правильні розрахунки у класі, якщо оцінки не виставлені(null)
 Перевірити роботу класу.
 
-Створити масив(або List<Student>) з обєктів Студентів. 
-	Знайти студента з найбільшим та найменшим середнім балом(визначити у класі Студент відповідні статичні методи). 
++   Створити масив(або List<Student>) з обєктів Студентів. 
++	Знайти студента з найбільшим та найменшим середнім балом(визначити у класі Студент відповідні статичні методи). 
 	*Використайте методи бібліотеки Linq: Max() та Min() ( students.Max( st => st.Average))
-	Знайти  кількість студентів, які здали певний предмет добре(середній бал більше рівний 7), статичний метод приймає список студентів(Count(), лямбда)	
++	Знайти  кількість студентів, які здали певний предмет добре(середній бал більше рівний 7), статичний метод приймає список студентів(Count(), лямбда)	
 
  */
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace _01_student
 {
@@ -88,7 +85,13 @@ namespace _01_student
             }
 
             public Student()
-            { }
+            {
+                this.Surname = "surname";
+                this.Name = "name";
+                this.Middlename = "middlename";
+                this.gradebook = ++count + constBook;
+                this.BirthDate = DateTime.Now;
+            }
 
             public Student(string surname, string name, string middlename, DateTime date)
             {
@@ -98,6 +101,7 @@ namespace _01_student
                 this.gradebook = ++count + constBook;
                 this.BirthDate = date;
             }
+
 
             public string Surname
             {
@@ -135,7 +139,6 @@ namespace _01_student
 
                 set 
                 {
-                    // як отримувати в сеттер стрінг, парсити його і віддавати DateTime?
                     date = value;
                 }
             }
@@ -143,15 +146,16 @@ namespace _01_student
             // *для видалення зайвих знаків з імен визначити приватний метод*
             private string CorrectName(string name)
             {
-                if (name == null)
-                    name = "noname";
-                if (String.IsNullOrEmpty(name))
-                    name = "noname";
+       
                 foreach(var c in name)
                 {
                     if (!char.IsLetter(c))
                         name = name.Remove(name.IndexOf(c), 1);
                 }
+                if (name == null)
+                    name = "noname";
+                if (String.IsNullOrEmpty(name))
+                    name = "noname";
                 return name;
             }
 
@@ -231,7 +235,7 @@ namespace _01_student
                     {
                         for (int i = 0; i < marks[subj].Length; i++)
                             avg += (double)marks[subj][i];
-                        return avg / marks[subj].Length;
+                        return Math.Round(avg / marks[subj].Length, 2);
                     }
                     else 
                         return avg;
@@ -249,7 +253,7 @@ namespace _01_student
                     {
                         for (int i = 0; i < marks[subj].Length; i++)
                             avg += (double)marks[subj][i];
-                        return avg / marks[subj].Length;
+                        return Math.Round(avg / marks[subj].Length, 2);
                     }
                     else
                         return avg;
@@ -267,7 +271,7 @@ namespace _01_student
                     {
                         for (int i = 0; i < marks[subj].Length; i++)
                             avg += (double)marks[subj][i];
-                        return avg / marks[subj].Length;
+                        return Math.Round(avg / marks[subj].Length, 2);
                     }
                     else
                         return avg;
@@ -290,7 +294,7 @@ namespace _01_student
                                 ++count;
                             }
                     }
-                    return avg / count;
+                    return Math.Round(avg / count, 2);
                 }
             }
 
@@ -365,6 +369,7 @@ namespace _01_student
                 Console.WriteLine($"Average mark of Admin:\t{AvgAdmin}");
                 Console.WriteLine($"Average mark of Design:\t{AvgDesign}");
                 Console.WriteLine($"Average mark of all subjects:\t{AvgAll}");
+                Console.WriteLine(" - - - - - - - - - - - - - - - - - - - - -");
             }
 
             //	введення даних про студента(імя, прізвище, по-батькові, група) через параметри
@@ -390,38 +395,96 @@ namespace _01_student
                 EnterDataSudent(_name, _surname, _middlename, _group);
             }
 
+            //Знайти студента з найбільшим та найменшим середнім балом(визначити у класі Студент відповідні статичні методи). 
+	        //*Використайте методи бібліотеки Linq: Max() та Min() (students.Max(st => st.Average))
+            static public void MaxAvgMark(Student[] students)
+            {
+                double max = students.Max((Student st) => st.AvgAll);
+                Console.WriteLine($"Max avg mark:\t{max}"); //потрібно повернути також FullName студента?  якщо так, то як в лямбді шукати по середньому балу а повертати елемент масиву Student
+            }
+
+            // Min
+            static public void MinAvgMark(Student[] students)
+            {
+                double min = students.Min((Student st) => st.AvgAll);
+                Console.WriteLine($"Min avg mark:\t{min}");
+            }
+
+            //Знайти  кількість студентів, які здали певний предмет добре(середній бал більше рівний 7), статичний метод приймає список студентів(Count(), лямбда)	
+            static public void CountGoodMark(Student[] students)
+            {
+                int cnt = 0;
+                cnt = students.Count((Student st) => st.AvgPrograming > 6);
+                Console.WriteLine($"Subject 'Programming' c-ty students with mark better than 7:\t{cnt}");
+                cnt = students.Count((Student st) => st.AvgAdmin > 6);
+                Console.WriteLine($"Subject 'Admin' c-ty students with mark better than 7:\t{cnt}");
+                cnt = students.Count((Student st) => st.AvgDesign > 6);
+                Console.WriteLine($"Subject 'Design' c-ty students with mark better than 7:\t{cnt}");
+            }
 
             public override string ToString()
             {
-                return $"\nID Gradebook:\t{gradebook}\nFull name:\t{FullName}\nBirth date:\t{date.ToShortDateString()}";
+                //return $"\nID Gradebook:\t{gradebook}\nFull name:\t{FullName}\nBirth date:\t{date.ToShortDateString()}";
+                return $"{gradebook}\t{FullName}\t{date.ToShortDateString()}";
             }
         }
 
         static void Main(string[] args)
         {
-            //Створити масив(або List< Student >) з обєктів Студентів.
-            //const int size = 5;
-            //Student [] students = new Student [size];
-            //students[0].EnterDataSudent("Pet789)(renko", "I,h2or 3", "Ivano5/-+, vych", "31PS9-1SPR");
+            // тест на одному обєкті
+            Student s = new Student("Pet789)(renko", "I,h2or 3", "Ivano5/-+, vych", new DateTime(2000, 7, 20)); // цифри й інші not letter символи проігнорить
 
-            Student s = new Student("Pet789)(renko", "I,h2or 3", "Ivano5/-+, vych", new DateTime(2000, 7, 20));
-     
-            s.SetMarksPrograming(10, 9, 0, 11, -5, 7 ); // 0 і -5 не додасть
+            s.SetMarksPrograming(10, 9, 0, 11, -5, 7); // 0 і -5 не додасть
             s.SetMarksAdmin(7, 8, 7, 11);
             s.SetMarksDesign(6, 8);
-            Console.WriteLine(s);
-            
-            Console.WriteLine($"Q-ty of students:\t{Student.QtyStudents}");
-            Console.WriteLine(s.FullYearsOnToday);
-            s.Group = "31PS9-1SPR";
-            s.SetMark(Student.Subject.Admin, 0, 12);
+            //Console.WriteLine(s);
+
+            //Console.WriteLine(s.FullYearsOnToday); //виводимо повний вік, реалізував у окремим рядком Print()
+            s.Group = "31PS9-1SPR"; //присвоюємо групу через автовластивість
+            s.SetMark(Student.Subject.Admin, 0, 12); // замінить 7 на 12
+            s.SetMark(Student.Subject.Admin, 4, 11); //не заміняє, бо нема такого елемента в масиві
+            s.SetMark(Student.Subject.Admin, 0, 13); //не замінить, бо оцінка виходить за межі 1..12
             s.Print();
             s.DeleteAllMarks();
-            //Console.WriteLine(s);
-            s.EnterDataSudent();
-            s.Print();
+            //s.EnterDataSudent(); //редагуємо ПІБ студента і групу
+            //s.Print();
 
+            //Створити масив(або List< Student >) з обєктів Студентів.
+            const int size = 5;
+            const string group = "31PS9-1SPR";
+            Random rand = new Random();
+            string[] names = { "Oleg", "Petro", "Olga", "Iryna", "Tetyana", "Fedir", "Mukolay", "Viktor", "Natalya", "Oksana" };
+            string[] surnames = { "Kovalenko", "Petrenko", "Shevchenko", "Bondar", "Melnik", "Koval", "Gonchar", "Kravchuk", "Tkach", "Finyuk" };
+            string[] middlename = { "Ole.", "Pet.", "Vik.", "Iv.", "Tar.", "Fed.", "Myk.", "Kost.", "Rom.", "Andr." };
 
+            Student [] students = new Student [size];
+            // щоб не прописувати врчуну генерю рандомно 5 студентів із рандомними оцінками і датами народження
+            for (int i = 0; i < size; i++)
+            {
+                students[i] = new Student();
+                students[i].EnterDataSudent(names[rand.Next(0, 9)], surnames[rand.Next(0, 9)], middlename[rand.Next(0, 9)], group);
+                students[i].BirthDate = new DateTime(rand.Next(1995, 2001), rand.Next(1, 12), rand.Next(1, 28));
+                for (int k = 0; k < rand.Next(1, 7); k++)
+                {
+                    students[i].SetMarksPrograming(rand.Next(1, 12));
+                    students[i].SetMarksAdmin(rand.Next(1, 12));
+                    students[i].SetMarksDesign(rand.Next(1, 12));
+                }
+                students[i].Print();
+            }
+
+            //список усіх студентів коротко
+            Console.WriteLine("\n{0}", s);
+            foreach (Student st in students)
+                Console.WriteLine(st);
+
+            // статистика по студентамм (окрім першого "Petrenko Ihor Ivanovych" який не входить у масив)
+            Console.WriteLine($"\nQ-ty of students:\t{Student.QtyStudents}"); //к-ть студентів 6 (5 створено масивом, 1 окремим обєктом)
+            Student.MinAvgMark(students);
+            Student.MaxAvgMark(students);
+            Student.CountGoodMark(students);
+
+            Console.ReadKey();
         }
     }
 }
