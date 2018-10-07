@@ -146,16 +146,15 @@ namespace _01_student
             // *для видалення зайвих знаків з імен визначити приватний метод*
             private string CorrectName(string name)
             {
-       
-                foreach(var c in name)
+                if (name == null)
+                    return "noname";
+                if (String.IsNullOrEmpty(name))
+                    return "noname";
+                foreach (var c in name)
                 {
                     if (!char.IsLetter(c))
                         name = name.Remove(name.IndexOf(c), 1);
                 }
-                if (name == null)
-                    name = "noname";
-                if (String.IsNullOrEmpty(name))
-                    name = "noname";
                 return name;
             }
 
