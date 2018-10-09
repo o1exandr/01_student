@@ -50,6 +50,13 @@
 	*Використайте методи бібліотеки Linq: Max() та Min() ( students.Max( st => st.Average))
 +	Знайти  кількість студентів, які здали певний предмет добре(середній бал більше рівний 7), статичний метод приймає список студентів(Count(), лямбда)	
 
+
+2. Індексатори. Визначити у  класі Студент :  
+	a) 2-вимірний індексатор з 2-ма індексами(перший індекс типу enum Subject, другий  типу int), який повертає доступ до певної оцінки з певного предмету.
+	   Наприклад,  student[Subject.Programming, 2] = 12; // поставили з  предмету програмування  2-гу оцінку 12.
+
+	b) 2-вимірний індексатор з 2-ма індексами(рядком та цілим), який повертає доступ до певної оцінки з певного предмету.
+	   Наприклад,  student["programming", 0] = 11; // поставили з  предмету програм 0-у оцінку 11.
  */
 
 using System;
@@ -324,9 +331,9 @@ namespace _01_student
             //виконувати перевірку номеру пари та самої оцінки на коректність(відповідні приватні методи перевірки)
             public void SetMark(Subject subject, int numLesson, int mark)
             {
-                if (ArrElemPresent((int)subject, numLesson))
-                    if (CorrectMark(mark))
-                        marks[(int)subject][numLesson] = mark;
+                //if (ArrElemPresent((int)subject, numLesson))
+                    //if (CorrectMark(mark))
+                        this[subject, numLesson] = mark;
             }
 
             // перевірка на коректність оцінки (в межах 1..12)
@@ -426,6 +433,91 @@ namespace _01_student
                 //return $"\nID Gradebook:\t{gradebook}\nFull name:\t{FullName}\nBirth date:\t{date.ToShortDateString()}";
                 return $"{gradebook}\t{FullName}\t{date.ToShortDateString()}";
             }
+
+            // a) 2-вимірний індексатор з 2-ма індексами(перший індекс типу enum Subject, другий  типу int), який повертає доступ до певної оцінки з певного предмету.
+            // Наприклад,  student[Subject.Programming, 2] = 12; // поставили з  предмету програмування  2-гу оцінку 12.
+            public int this[Subject subj, int index]
+            {
+                get
+                {
+                    if (ArrElemPresent((int)subj, index))
+                        return marks[(int)subj][index];
+                    else
+                        return int.MinValue;
+            
+                }
+                set
+                {
+                    if (ArrElemPresent((int)subj, index))
+                        if (CorrectMark(value))
+                            marks[(int)subj][index] = value;
+                }
+            }
+
+            //b) 2-вимірний індексатор з 2-ма індексами(рядком та цілим), який повертає доступ до певної оцінки з певного предмету.
+            //Наприклад,  student["programming", 0] = 11; // поставили з  предмету програм 0-у оцінку 11.
+            public int this[string subj, int index]
+            {
+                get
+                {
+                    switch (subj)
+                    {
+                        case "programming":
+                            {
+                                if (ArrElemPresent(0, index))
+                                    return marks[0][index];
+                                else
+                                    return 0;
+                            }
+                        case "admin":
+                            {
+                                if (ArrElemPresent(1, index))
+                                    return marks[1][index];
+                                else
+                                    return 0;
+                            }
+                        case "design":
+                            {
+                                if (ArrElemPresent(2, index))
+                                    return marks[2][index];
+                                else
+                                    return 0;
+                            }
+                        default:
+                            return int.MinValue;
+                    }
+                }
+                /*
+                set
+                {
+                    if (CorrectMark(value))
+                    {
+                        switch (subj)
+                        {
+                            case "programming":
+                                {
+                                    //if (ArrElemPresent(0, index)) ;
+                                        //marks[0][index] = value;
+                                }
+                            case "admin":
+                                {
+                                    if (ArrElemPresent(1, index))
+                                        marks[1][index] = value;
+                                }
+                            case "design":
+                                {
+                                    if (ArrElemPresent(2, index))
+                                        marks[2][index] = value;
+                                }
+                            default:
+                                marks[2][index] = value;
+
+                        }
+                    }
+
+                }
+                */
+            }
         }
 
         static void Main(string[] args)
@@ -440,11 +532,11 @@ namespace _01_student
 
             //Console.WriteLine(s.FullYearsOnToday); //виводимо повний вік, реалізував у окремим рядком Print()
             s.Group = "31PS9-1SPR"; //присвоюємо групу через автовластивість
-            s.SetMark(Student.Subject.Admin, 0, 12); // замінить 7 на 12
+            
             s.SetMark(Student.Subject.Admin, 4, 11); //не заміняє, бо нема такого елемента в масиві
             s.SetMark(Student.Subject.Admin, 0, 13); //не замінить, бо оцінка виходить за межі 1..12
             s.Print();
-            s.DeleteAllMarks();
+            //s.DeleteAllMarks();
             //s.EnterDataSudent(); //редагуємо ПІБ студента і групу
             //s.Print();
 
@@ -482,6 +574,14 @@ namespace _01_student
             Student.MinAvgMark(students);
             Student.MaxAvgMark(students);
             Student.CountGoodMark(students);
+
+            // робота з індексаторами
+            Console.WriteLine($"\nMark[{Student.Subject.Admin}, 0] :\t{s[Student.Subject.Admin, 0]}"); // виводимо через Enum
+            s[Student.Subject.Admin, 0] = 12; // присвоюємо оцінку через Enum //замінить 7 на 12
+            Console.WriteLine($"Mark[{Student.Subject.Admin}, 0] :\t{s[Student.Subject.Admin, 0]}"); //знову через Enum
+            Console.WriteLine($"Mark[programming, 0] :\t{s["programming", 0]}"); //через string
+            Console.WriteLine($"Mark[uml, 0] :\t{s["uml", 0]}"); //через string неіснуючий предмет
+
 
             Console.ReadKey();
         }
