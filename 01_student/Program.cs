@@ -467,56 +467,62 @@ namespace _01_student
                                 if (ArrElemPresent(0, index))
                                     return marks[0][index];
                                 else
-                                    return 0;
+                                    return int.MinValue;
                             }
                         case "admin":
                             {
                                 if (ArrElemPresent(1, index))
                                     return marks[1][index];
                                 else
-                                    return 0;
+                                    return int.MinValue;
                             }
                         case "design":
                             {
                                 if (ArrElemPresent(2, index))
                                     return marks[2][index];
                                 else
-                                    return 0;
+                                    return int.MinValue;
                             }
                         default:
                             return int.MinValue;
                     }
                 }
-                /*
+                
                 set
                 {
                     if (CorrectMark(value))
                     {
                         switch (subj)
                         {
+                            
                             case "programming":
                                 {
-                                    //if (ArrElemPresent(0, index)) ;
-                                        //marks[0][index] = value;
+                                    if (ArrElemPresent(0, index))
+                                        marks[0][index] = value;
+                                    break;
                                 }
                             case "admin":
                                 {
                                     if (ArrElemPresent(1, index))
                                         marks[1][index] = value;
+                                    break;
                                 }
                             case "design":
                                 {
                                     if (ArrElemPresent(2, index))
                                         marks[2][index] = value;
+                                    break;
                                 }
                             default:
-                                marks[2][index] = value;
+                                {
+                                    break;
+                                }
 
                         }
                     }
 
                 }
-                */
+                
             }
         }
 
@@ -579,7 +585,9 @@ namespace _01_student
             Console.WriteLine($"\nMark[{Student.Subject.Admin}, 0] :\t{s[Student.Subject.Admin, 0]}"); // виводимо через Enum
             s[Student.Subject.Admin, 0] = 12; // присвоюємо оцінку через Enum //замінить 7 на 12
             Console.WriteLine($"Mark[{Student.Subject.Admin}, 0] :\t{s[Student.Subject.Admin, 0]}"); //знову через Enum
-            Console.WriteLine($"Mark[programming, 0] :\t{s["programming", 0]}"); //через string
+            Console.WriteLine($"Mark[programming, 0] :\t{s["programming", 0]}"); // вивід через string
+            s["programming", 0] = 7; // зміна через індекс string
+            Console.WriteLine($"Mark[programming, 0] :\t{s["programming", 0]}"); // вивід
             Console.WriteLine($"Mark[uml, 0] :\t{s["uml", 0]}"); //через string неіснуючий предмет
 
 
@@ -587,3 +595,5 @@ namespace _01_student
         }
     }
 }
+
+
