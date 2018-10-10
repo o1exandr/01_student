@@ -57,6 +57,14 @@
 
 	b) 2-вимірний індексатор з 2-ма індексами(рядком та цілим), який повертає доступ до певної оцінки з певного предмету.
 	   Наприклад,  student["programming", 0] = 11; // поставили з  предмету програм 0-у оцінку 11.
+
+       3. Змінити клас Студент(рваний масив оцінок).
+Визначити властивості обчислення середніх оцінок різних предметів  як double? (Nullable<double>)
+Виправити метод друку студента(якщо необхідно).
+Перевірити роботу властивостей у функції для деякого екземпляра(ів)  класу Студент.
+
+Користуватися властивостями та методами для nullable типів: HasValue, Value, GetValueOrDefault()
+
  */
 
 using System;
@@ -68,6 +76,7 @@ namespace _01_student
     {
         internal class Student
         {
+    
             string surname;
             string name;
             string middlename;
@@ -229,78 +238,90 @@ namespace _01_student
                 }
                 return str;
             }
-
+   
             //середній бал з програмування ( read-only властивість )
-            public double AvgPrograming
+            public Nullable<double> AvgPrograming
             {
                 get
                 {
-                    double avg = 0;
+                    Nullable<double> avg = null;
                     int subj = (int)Subject.Programming;
                     if (marks[subj].Length != 0)
                     {
+                        avg = 0;
                         for (int i = 0; i < marks[subj].Length; i++)
                             avg += (double)marks[subj][i];
-                        return Math.Round(avg / marks[subj].Length, 2);
                     }
-                    else 
-                        return avg;
+                    if (avg.HasValue)
+                        return avg / (double)marks[subj].Length;
+                    else
+                        return avg.GetValueOrDefault(0);
                 }
             }
 
             //середній бал з адміністрування(read-only властивість,)
-            public double AvgAdmin
+            public Nullable<double> AvgAdmin
             {
                 get
                 {
-                    double avg = 0;
+                    Nullable<double> avg = null;
                     int subj = (int)Subject.Admin;
                     if (marks[subj].Length != 0)
                     {
+                        avg = 0;
                         for (int i = 0; i < marks[subj].Length; i++)
                             avg += (double)marks[subj][i];
-                        return Math.Round(avg / marks[subj].Length, 2);
                     }
+                    if (avg.HasValue)
+                        return avg / (double?)marks[subj].Length;
                     else
-                        return avg;
+                        return avg.GetValueOrDefault(0);
                 }
             }
 
             //середній бал з дизайну(read-only властивість)
-            public double AvgDesign
+            public Nullable<double> AvgDesign
             {
                 get
                 {
-                    double avg = 0;
+                    Nullable<double> avg = null;
                     int subj = (int)Subject.Design;
                     if (marks[subj].Length != 0)
                     {
+                        avg = 0;
                         for (int i = 0; i < marks[subj].Length; i++)
                             avg += (double)marks[subj][i];
-                        return Math.Round(avg / marks[subj].Length, 2);
                     }
+                    if (avg.HasValue)
+                        return avg / (double?)marks[subj].Length;
                     else
-                        return avg;
+                        return avg.GetValueOrDefault(0);
                 }
             }
 
             //середній бал успішності з усіх предметів ( read-only властивість)
-            public double AvgAll
+            public Nullable<double> AvgAll
             {
                 get
                 {
-                    double avg = 0;
+                    Nullable<double> avg = null;
                     int count = 0;
-                    for(int k = 0; k < marks.Length; k++)
-                    if (marks[k].Length != 0)
-                    {
-                        for (int i = 0; i < marks[k].Length; i++)
-                            {
-                                avg += (double)marks[k][i];
-                                ++count;
-                            }
-                    }
-                    return Math.Round(avg / count, 2);
+                    for (int k = 0; k < marks.Length; k++)
+                        if (marks[k].Length != 0)
+                        {
+                            if (count == 0)
+                                avg = 0;
+                            for (int i = 0; i < marks[k].Length; i++)
+                                { 
+                                    avg += (double)marks[k][i];
+                                    ++count;
+                                }
+                        }
+                    if (avg.HasValue)
+                        return avg / (double)count;
+                    else
+                        return avg.GetValueOrDefault(0); 
+    
                 }
             }
 
@@ -405,14 +426,14 @@ namespace _01_student
 	        //*Використайте методи бібліотеки Linq: Max() та Min() (students.Max(st => st.Average))
             static public void MaxAvgMark(Student[] students)
             {
-                double max = students.Max((Student st) => st.AvgAll);
+                Nullable<double> max = students.Max((Student st) => st.AvgAll);
                 Console.WriteLine($"Max avg mark:\t{max}"); //потрібно повернути також FullName студента?  якщо так, то як в лямбді шукати по середньому балу а повертати елемент масиву Student
             }
 
             // Min
             static public void MinAvgMark(Student[] students)
             {
-                double min = students.Min((Student st) => st.AvgAll);
+                Nullable<double> min = students.Min((Student st) => st.AvgAll);
                 Console.WriteLine($"Min avg mark:\t{min}");
             }
 
@@ -561,7 +582,7 @@ namespace _01_student
                 students[i] = new Student();
                 students[i].EnterDataSudent(names[rand.Next(0, 9)], surnames[rand.Next(0, 9)], middlename[rand.Next(0, 9)], group);
                 students[i].BirthDate = new DateTime(rand.Next(1995, 2001), rand.Next(1, 12), rand.Next(1, 28));
-                for (int k = 0; k < rand.Next(1, 7); k++)
+                for (int k = 0; k < rand.Next(0, 7); k++)
                 {
                     students[i].SetMarksPrograming(rand.Next(1, 12));
                     students[i].SetMarksAdmin(rand.Next(1, 12));
@@ -589,6 +610,15 @@ namespace _01_student
             s["programming", 0] = 7; // зміна через індекс string
             Console.WriteLine($"Mark[programming, 0] :\t{s["programming", 0]}"); // вивід
             Console.WriteLine($"Mark[uml, 0] :\t{s["uml", 0]}"); //через string неіснуючий предмет
+
+               
+            //  Nullable<double> для деякого екземпляра(ів)  класу Студент.
+            Student s1 = new Student("Mykolaenko", "Viktor", "Petrovych", new DateTime(1999, 8, 24));
+            s1.Print(); // без оцінок
+            s1.SetMarksPrograming(5);
+            s1.SetMarksPrograming(10);
+            s1.SetMarksAdmin(9);
+            s1.Print(); // з оцінками 
 
 
             Console.ReadKey();
