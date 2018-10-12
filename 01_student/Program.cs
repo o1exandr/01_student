@@ -250,10 +250,10 @@ namespace _01_student
                     {
                         avg = 0;
                         for (int i = 0; i < marks[subj].Length; i++)
-                            avg += (double)marks[subj][i];
+                            avg += (double?)marks[subj][i];
                     }
                     if (avg.HasValue)
-                        return avg / (double)marks[subj].Length;
+                        return avg / (double?)marks[subj].Length;
                     else
                         return avg.GetValueOrDefault(0);
                 }
@@ -318,7 +318,7 @@ namespace _01_student
                                 }
                         }
                     if (avg.HasValue)
-                        return avg / (double)count;
+                        return avg / count;
                     else
                         return avg.GetValueOrDefault(0); 
     
@@ -392,10 +392,10 @@ namespace _01_student
             {
                 Console.WriteLine($"\nID Gradebook:\t{gradebook}\nFull name:\t{FullName}\nBirth date:\t{date.ToShortDateString()} ({FullYearsOnToday} years)");
                 Console.WriteLine($"Un-sity/Group:\t{nameUniversity} / {Group}\n{PrintMarks(marks, "\n\tMarks:\n----------------\n")}");
-                Console.WriteLine($"Average mark of Programming:\t{AvgPrograming}");
-                Console.WriteLine($"Average mark of Admin:\t{AvgAdmin}");
-                Console.WriteLine($"Average mark of Design:\t{AvgDesign}");
-                Console.WriteLine($"Average mark of all subjects:\t{AvgAll}");
+                Console.WriteLine($"Average mark of Programming:\t{AvgPrograming:F2}");
+                Console.WriteLine($"Average mark of Admin:\t\t{AvgAdmin:F2}");
+                Console.WriteLine($"Average mark of Design:\t\t{AvgDesign:F2}");
+                Console.WriteLine($"Average mark of all subjects:\t{AvgAll:F2}");
                 Console.WriteLine(" - - - - - - - - - - - - - - - - - - - - -");
             }
 
@@ -427,14 +427,14 @@ namespace _01_student
             static public void MaxAvgMark(Student[] students)
             {
                 Nullable<double> max = students.Max((Student st) => st.AvgAll);
-                Console.WriteLine($"Max avg mark:\t{max}"); //потрібно повернути також FullName студента?  якщо так, то як в лямбді шукати по середньому балу а повертати елемент масиву Student
+                Console.WriteLine($"Max avg mark:\t{max:F2}"); //потрібно повернути також FullName студента?  якщо так, то як в лямбді шукати по середньому балу а повертати елемент масиву Student
             }
 
             // Min
             static public void MinAvgMark(Student[] students)
             {
                 Nullable<double> min = students.Min((Student st) => st.AvgAll);
-                Console.WriteLine($"Min avg mark:\t{min}");
+                Console.WriteLine($"Min avg mark:\t{min:F2}");
             }
 
             //Знайти  кількість студентів, які здали певний предмет добре(середній бал більше рівний 7), статичний метод приймає список студентів(Count(), лямбда)	
